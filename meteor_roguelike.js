@@ -39,6 +39,22 @@ if (Meteor.isClient) {
       }
     }
   });
+} else {
+  // SERVER code, todo: move
+  Entity.allow({
+    update: function(userId, old_entity, fieldNames, mods) {
+      var new_entity = EJSON.clone(old_entity);
+      LocalCollection._modify(new_entity, mods);
+      if (_.contains(fieldNames, 'position')) {
+        return new_entity.position.x >= 0
+            && new_entity.position.y >= 0
+            && new_entity.position.x < BOARDSIZE.x
+            && new_entity.position.y < BOARDSIZE.y;
+      }
+
+      return true;
+    }
+  });
 }
 
 
@@ -47,5 +63,5 @@ if (Meteor.isClient) {
  * Entity, Component, System
  * Players moving around on grid
  *
- *
  */
+

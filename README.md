@@ -1,7 +1,8 @@
 TODO
+- facebook login
+- multiple players
 - use canvas element for walking around
 x player can move around
-- facebook login
 - use canvas
 
 
