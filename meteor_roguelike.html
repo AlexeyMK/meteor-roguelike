@@ -8,10 +8,14 @@
 
 <template name="world_grid">
   <div id="grid_world">
-    <table> {{#each colSize}}
-      <tr> {{#each rowSize}}
-        <td> {{value_at_cell this ../this}}</td>
+    <table> {{#each rows}}
+      <tr> {{#each innerLoop}}
+        <td> {{> cell }}</td>
       {{/each}} </tr>
     {{/each}} </table>
   </div>
+</template>
+
+<template name="cell">
+  {{ renderCell }}
 </template>
