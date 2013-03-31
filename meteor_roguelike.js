@@ -13,7 +13,7 @@ if (Meteor.isClient) {
 
   $(document).keydown(function(e) {
     change = KEYS_TO_XY_CHANGE[e.keyCode] || {};
-    Entity.update({_id: "fWmZTarmkfgxQ84b6"},
+    Entity.update({_id: Meteor.user().profile.entity_id},
       {$inc: change}
     );
   });
@@ -41,6 +41,18 @@ if (Meteor.isClient) {
   });
 } else {
   // SERVER code, todo: move
+  Accounts.onCreateUser(function(options, user) {
+    var entity_id = Entity.insert({
+      position: { x: 0, y: 0},
+      display: options.profile.name[0]
+    });
+
+    user.profile = options.profile;
+    user.profile.entity_id = entity_id;
+    return user;
+  });
+
+
   Entity.allow({
     update: function(userId, old_entity, fieldNames, mods) {
       var new_entity = EJSON.clone(old_entity);
@@ -51,7 +63,7 @@ if (Meteor.isClient) {
             && new_entity.position.x < BOARDSIZE.x
             && new_entity.position.y < BOARDSIZE.y;
       }
-
+tj
       return true;
     }
   });

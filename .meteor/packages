@@ -8,3 +8,5 @@ insecure
 preserve-inputs
 jquery
 underscore
+accounts-ui
+accounts-facebook
