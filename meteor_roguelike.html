@@ -7,7 +7,7 @@
 </body>
 
 <template name="world_grid">
-  <div>
+  <div id="grid_world">
     <table> {{#each colSize}}
       <tr> {{#each rowSize}}
         <td> {{value_at_cell this ../this}}</td>
