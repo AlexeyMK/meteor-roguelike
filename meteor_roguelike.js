@@ -19,19 +19,18 @@ if (Meteor.isClient) {
   });
 
   Template.world_grid.helpers({
-    rows: function() {return _.range(BOARDSIZE.y);},
-    innerLoop: function() {
-      var row = this.valueOf();
-      return _.range(BOARDSIZE.x).map(function(col) {
-        return [col, row]; // x, y
+    eachRow: function() {return _.range(BOARDSIZE.y);},
+    eachCell: function() {
+      var y = this.valueOf();
+      return _.range(BOARDSIZE.x).map(function(x) {
+        return {x:x, y:y};
       });
     }
   })
 
   Template.cell.helpers({
     renderCell: function() {
-      var x = this[0], y = this[1];
-      var entity = Entity.findOne({position: {x: x, y: y}});
+      var entity = Entity.findOne({position: {x: this.x, y: this.y}});
       if (entity) {
           return entity.display;
       } else {

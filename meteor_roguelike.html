@@ -11,8 +11,8 @@
 
 <template name="world_grid">
   <div id="grid_world">
-    <table> {{#each rows}}
-      <tr> {{#each innerLoop}}
+    <table> {{#each eachRow}}
+      <tr> {{#each eachCell}}
         <td> {{> cell }}</td>
       {{/each}} </tr>
     {{/each}} </table>
