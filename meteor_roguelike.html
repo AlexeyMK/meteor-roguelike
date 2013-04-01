@@ -5,6 +5,8 @@
 <body>
   {{ loginButtons }}
   {{> world_grid }}
+  <hr>
+  {{> participants }}
 </body>
 
 <template name="world_grid">
@@ -19,4 +21,10 @@
 
 <template name="cell">
   {{ renderCell }}
+</template>
+<template name="participants">
+Here:
+<ul>{{#each whoshere}}
+  <li>{{this.profile.name}}</li>
+{{/each}}</ul>
 </template>

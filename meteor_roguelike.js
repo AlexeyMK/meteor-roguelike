@@ -39,6 +39,15 @@ if (Meteor.isClient) {
       }
     }
   });
+
+  Template.participants.helpers({
+    whoshere: function() {
+      return Meteor.users.find().fetch();
+    }
+
+  });
+
+
 } else {
   // SERVER code, todo: move
   Accounts.onCreateUser(function(options, user) {
