@@ -10,3 +10,4 @@ x player can move around
 
 QUESTIONS FOR METEOR TEAM:
 - is there a cleverer way to pass [x, y] to the child template?
+- why doesn't my normal keydown work?

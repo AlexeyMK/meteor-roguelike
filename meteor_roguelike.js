@@ -57,6 +57,7 @@ if (Meteor.isClient) {
 
     user.profile = options.profile;
     user.profile.entity_id = entity_id;
+    // TODO add saving user profile image url to profile
     return user;
   });
 
