@@ -68,12 +68,3 @@ tj
     }
   });
 }
-
-
-
-/* The idea
- * Entity, Component, System
- * Players moving around on grid
- *
- */
-
