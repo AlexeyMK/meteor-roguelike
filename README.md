@@ -1,9 +1,11 @@
 TODO
 x facebook login
 x multiple players
-- use canvas element for walking around
 x player can move around
+- use facebook photo
 - use canvas
+- add score element
+- write sample game (tag?)
 
 
 QUESTIONS FOR METEOR TEAM:
