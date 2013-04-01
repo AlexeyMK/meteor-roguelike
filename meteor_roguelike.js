@@ -12,6 +12,7 @@ if (Meteor.isClient) {
   };
 
   $(document).keydown(function(e) {
+    e.preventDefault();
     change = KEYS_TO_XY_CHANGE[e.keyCode] || {};
     Entity.update({_id: Meteor.user().profile.entity_id},
       {$inc: change}
