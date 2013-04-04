@@ -40,11 +40,10 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.participants.helpers({
-    whoshere: function() {
-      return Meteor.users.find().fetch();
+  Template.scoreboard.helpers({
+    players_by_score: function() {
+      return Entity.find({score: {$exists: true}}, {sort: ['score']}).fetch()
     }
-
   });
 
 
@@ -53,7 +52,8 @@ if (Meteor.isClient) {
   Accounts.onCreateUser(function(options, user) {
     var entity_id = Entity.insert({
       position: { x: 0, y: 0},
-      display: options.profile.name[0]
+      display: options.profile.name[0],
+      name: options.profile.name[0],
     });
 
     user.profile = options.profile;
@@ -73,7 +73,6 @@ if (Meteor.isClient) {
             && new_entity.position.x < BOARDSIZE.x
             && new_entity.position.y < BOARDSIZE.y;
       }
-tj
       return true;
     }
   });

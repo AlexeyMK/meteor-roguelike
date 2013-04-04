@@ -2,3 +2,7 @@
 #grid_world {
   font-family: Courier New;
 }
+
+#scoreboard {
+  float: right;
+}
