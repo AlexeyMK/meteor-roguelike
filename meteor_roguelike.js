@@ -1,6 +1,13 @@
 Entity = new Meteor.Collection("entity");
 
-BOARDSIZE = {x: 60, y: 20};
+BOARDSIZE = {x: 40, y: 20};
+
+var random_position = function() {
+  return {
+    x: Math.floor(Math.random() * BOARDSIZE.x),
+    y: Math.floor(Math.random() * BOARDSIZE.y)
+  }
+}
 
 if (Meteor.isClient) {
 
@@ -61,6 +68,53 @@ if (Meteor.isClient) {
     // TODO add saving user profile image url to profile
     return user;
   });
+
+  // candy game code
+  (function() {
+    Meteor.startup(function(){
+      update_candy();
+      reset_candyloop();
+    });
+
+    var update_candy = function() {
+      Entity.remove({reward: {$exists: true}});
+      var candy_position = random_position();
+      Entity.insert({
+        reward: 2, // arbitrary point value
+        position: candy_position, // arbitrary point value
+        display: '%' // arbitrary point value
+      });
+
+      var players_at_candy = Entity.find({
+        score: {$exists: true},
+        position: candy_position
+      });
+      if (players_at_candy.count() > 0) {
+        // TODO Keep fixing from here AMK
+        //update_candy(); // bad location, let's try again
+      } else {
+        var observer = players_at_candy.observe({
+          added: function(player_got_to_candy) {
+            observer.stop();
+            // is the candy still there, or is this an old observer?
+            if (Entity.findOne({reward: {$exists: true}, position: candy_position})) {
+              Entity.update({_id: player_got_to_candy._id},
+                {$inc: {score: 2}});
+              reset_candyloop();
+              update_candy();
+            }
+          }
+        });
+      }
+    };
+
+    var candyloop_interval_id = 0;
+    var reset_candyloop = function() {
+      Meteor.clearInterval(candyloop_interval_id);
+      candyloop_interval_id = Meteor.setInterval(update_candy, 2000);
+    };
+  })(); // /candy game code
+
 
 
   Entity.allow({
