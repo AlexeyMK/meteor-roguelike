@@ -71,6 +71,7 @@ if (Meteor.isClient) {
       display: options.profile.name[0],
       display_color: "rgb(0,0,255)",
       name: options.profile.name,
+      score: 0
     });
 
     user.profile = options.profile;
