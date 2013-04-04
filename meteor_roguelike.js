@@ -43,13 +43,16 @@ if (Meteor.isClient) {
   })
 
   Template.cell.helpers({
-    renderCell: function() {
+    cell_contents: function() {
       var entity = Entity.findOne({position: {x: this.x, y: this.y}});
-      if (entity) {
-          return entity.display;
-      } else {
-        return "_";
+      return entity || {display: "_"};
+    },
+    get_color: function() {
+      if (Meteor.user() && Meteor.user().profile.entity_id == this._id) {
+        return "rgb(0,255,0)";  // you are green
       }
+
+      return this.display_color || "rgb(0,0,0)";  // default color is black
     }
   });
 
@@ -66,6 +69,7 @@ if (Meteor.isClient) {
     var entity_id = Entity.insert({
       position: random_empty_position(),
       display: options.profile.name[0],
+      display_color: "rgb(0,0,255)",
       name: options.profile.name,
     });
 
@@ -97,7 +101,8 @@ if (Meteor.isClient) {
       Entity.insert({
         type: 'candy',
         position: candy_position,
-        display: '%' // arbitrary image
+        display: '%', // arbitrary
+        display_color: 'rgb(255,0,0)'
       });
 
       var players_at_candy = Entity.find({
@@ -114,8 +119,6 @@ if (Meteor.isClient) {
       });
     };
   })(); // /candy game code
-
-
 
   Entity.allow({
     update: function(userId, old_entity, fieldNames, mods) {

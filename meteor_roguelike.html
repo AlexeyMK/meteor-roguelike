@@ -22,7 +22,11 @@
 </template>
 
 <template name="cell">
-  {{ renderCell }}
+  {{#with cell_contents}}
+    <span style="color: {{get_color}};">
+      {{display}}
+    </span>
+  {{/with}}
 </template>
 
 <template name="scoreboard">
@@ -31,6 +35,5 @@
     <ul>{{#each players_by_score}}
         <li>{{name}}: {{score}}</li>
     {{/each}}</ul>
-
   </div>
 </template>
