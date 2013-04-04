@@ -65,6 +65,11 @@ if (Meteor.isClient) {
 
   Entity.allow({
     update: function(userId, old_entity, fieldNames, mods) {
+      var changable_fieldnames = ['position'];
+      if (_.difference(fieldNames, changable_fieldnames).length) {
+        return false;  //we don't let you change this field from client
+      }
+
       var new_entity = EJSON.clone(old_entity);
       LocalCollection._modify(new_entity, mods);
       if (_.contains(fieldNames, 'position')) {
