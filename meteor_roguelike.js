@@ -49,7 +49,7 @@ if (Meteor.isClient) {
 
   Template.scoreboard.helpers({
     players_by_score: function() {
-      return Entity.find({score: {$exists: true}}, {sort: ['score']}).fetch()
+      return Entity.find({score: {$exists: true, $gt: 0}}, {sort: ['score', 'desc']}).fetch()
     }
   });
 
