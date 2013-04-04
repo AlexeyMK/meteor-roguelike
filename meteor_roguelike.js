@@ -60,7 +60,7 @@ if (Meteor.isClient) {
     var entity_id = Entity.insert({
       position: { x: 0, y: 0},
       display: options.profile.name[0],
-      name: options.profile.name[0],
+      name: options.profile.name,
     });
 
     user.profile = options.profile;
