@@ -2,10 +2,16 @@ Entity = new Meteor.Collection("entity");
 
 BOARDSIZE = {x: 40, y: 20};
 
-var random_position = function() {
-  return {
+var random_empty_position = function() {
+  var guess = {
     x: Math.floor(Math.random() * BOARDSIZE.x),
     y: Math.floor(Math.random() * BOARDSIZE.y)
+  };
+
+  if (!Entity.findOne({position: guess})) {
+    return guess;
+  } else {
+    return random_empty_position();  // try again
   }
 }
 
@@ -49,7 +55,7 @@ if (Meteor.isClient) {
 
   Template.scoreboard.helpers({
     players_by_score: function() {
-      return Entity.find({score: {$exists: true, $gt: 0}}, {sort: ['score', 'desc']}).fetch()
+      return Entity.find({score: {$exists: true, $gt: 0}}, {sort: [['score', 'desc']]}).fetch()
     }
   });
 
@@ -58,7 +64,7 @@ if (Meteor.isClient) {
   // SERVER code, todo: move
   Accounts.onCreateUser(function(options, user) {
     var entity_id = Entity.insert({
-      position: { x: 0, y: 0},
+      position: random_empty_position(),
       display: options.profile.name[0],
       name: options.profile.name,
     });
@@ -71,47 +77,41 @@ if (Meteor.isClient) {
 
   // candy game code
   (function() {
+    var CANDY_DURATION_MS = 4000, CANDY_REWARD = 2, timeout_id = 0, observer;
+
     Meteor.startup(function(){
-      update_candy();
-      reset_candyloop();
+      new_candy_location();
     });
 
-    var update_candy = function() {
-      Entity.remove({reward: {$exists: true}});
-      var candy_position = random_position();
+    var new_candy_location = function() {
+      // out with the old
+      Meteor.clearTimeout(timeout_id);
+      timeout_id = Meteor.setTimeout(new_candy_location, CANDY_DURATION_MS);
+      Entity.remove({type: 'candy'});
+      if (observer) {
+        observer.stop();  // stop listening for players arriving at old candy
+      }
+
+      // in with the new
+      var candy_position = random_empty_position();
       Entity.insert({
-        reward: 2, // arbitrary point value
-        position: candy_position, // arbitrary point value
-        display: '%' // arbitrary point value
+        type: 'candy',
+        position: candy_position,
+        display: '%' // arbitrary image
       });
 
       var players_at_candy = Entity.find({
         score: {$exists: true},
         position: candy_position
       });
-      if (players_at_candy.count() > 0) {
-        // TODO Keep fixing from here AMK
-        //update_candy(); // bad location, let's try again
-      } else {
-        var observer = players_at_candy.observe({
-          added: function(player_got_to_candy) {
-            observer.stop();
-            // is the candy still there, or is this an old observer?
-            if (Entity.findOne({reward: {$exists: true}, position: candy_position})) {
-              Entity.update({_id: player_got_to_candy._id},
-                {$inc: {score: 2}});
-              reset_candyloop();
-              update_candy();
-            }
-          }
-        });
-      }
-    };
 
-    var candyloop_interval_id = 0;
-    var reset_candyloop = function() {
-      Meteor.clearInterval(candyloop_interval_id);
-      candyloop_interval_id = Meteor.setInterval(update_candy, 2000);
+      observer = players_at_candy.observe({
+        added: function(point_winner) {
+          Entity.update({_id: point_winner._id},
+            {$inc: {score: CANDY_REWARD}});
+          new_candy_location();
+        }
+      });
     };
   })(); // /candy game code
 
