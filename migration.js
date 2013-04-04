@@ -12,6 +12,12 @@ if (Meteor.isServer) {
       });
       Migrations.insert({name: "addscore"});
     }
+    if (!Migrations.findOne({name: "addscore2"})) {
+      Entity.update({name: {$exists: true}, score: {$exists: false}}, {
+        score: 0
+      });
+      Migrations.insert({name: "addscore2"});
+    }
 
     if (!Migrations.findOne({name: "players_back_to_range"})) {
       Entity.find({$or: [{'position.x': {$gte: BOARDSIZE.x}},
