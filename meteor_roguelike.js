@@ -47,6 +47,13 @@ if (Meteor.isClient) {
       var entity = Entity.findOne({position: {x: this.x, y: this.y}});
       return entity || {display: "_"};
     },
+    get_body: function() {
+      if (this.display_photourl) {
+        return "<img class='fb_profilephoto' src='"+this.display_photourl+"'></img>";
+      } else {
+        return this.display;
+      }
+    },
     get_color: function() {
       if (Meteor.user() && Meteor.user().profile.entity_id == this._id) {
         return "rgb(0,255,0)";  // you are green
@@ -70,6 +77,8 @@ if (Meteor.isClient) {
       position: random_empty_position(),
       display: options.profile.name[0],
       display_color: "rgb(0,0,255)",
+      display_photourl:
+        "http://graph.facebook.com/" + user.services.facebook.id + "/picture",
       name: options.profile.name,
       score: 0
     });

@@ -12,11 +12,11 @@ if (Meteor.isServer) {
       });
       Migrations.insert({name: "addscore"});
     }
-    if (!Migrations.findOne({name: "addscore2"})) {
-      Entity.update({name: {$exists: true}, score: {$exists: false}}, {
-        score: 0
-      });
-      Migrations.insert({name: "addscore2"});
+    if (!Migrations.findOne({name: "addscore4"})) {
+      Entity.update({name: {$exists: true}, score: {$exists: false}},
+        {$set: {score: 0}}, {multi: true}
+      );
+      Migrations.insert({name: "addscore4"});
     }
 
     if (!Migrations.findOne({name: "players_back_to_range"})) {
@@ -32,6 +32,17 @@ if (Meteor.isServer) {
     if (!Migrations.findOne({name: "kill_rewards"})) {
       Entity.remove({reward: {$exists: true}});
       Migrations.insert({name: "kill_rewards"});
+    }
+    if (!Migrations.findOne({name: "add_photos2"})) {
+      Meteor.users.find({}, { fields: { services: 1, profile:1 } }
+      ).forEach(function (user) {
+        console.log("updating photos for ", user);
+        Entity.update({_id: user.profile.entity_id}, {
+          $set: {display_photourl:
+            "http://graph.facebook.com/" + user.services.facebook.id + "/picture"
+        }});
+      });
+      Migrations.insert({name: "add_photos2"});
     }
   });
 }
