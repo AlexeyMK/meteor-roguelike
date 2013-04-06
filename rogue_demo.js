@@ -15,16 +15,6 @@ var random_empty_position = function() {
   }
 }
 
-Meteor.startup(function() {
-  var entity_id = BoardObject.insert({
-      position: {x: 2, y:2},
-      display: 'A',
-      display_color: "rgb(0,0,255)",
-      name: 'Alexey',
-      score: 0
-    });
-});
-
 if (Meteor.isClient) {
   Template.grid_world.helpers({
     row: function() { return _.range(BOARDSIZE.y);},
@@ -48,13 +38,33 @@ if (Meteor.isClient) {
   $(document).keydown(function(e) {
     e.preventDefault();
     change = KEYS_TO_XY_CHANGE[e.keyCode] || {};
-    BoardObject.update({_id: BoardObject.findOne()._id},
-      {$inc: change}
-    );
+    if (Meteor.userId) {
+      BoardObject.update({_id: Meteor.user().profile.board_object},
+        {$inc: change}
+      );
+    }
   });
 }
 
 if (Meteor.isServer) {
+ Accounts.onCreateUser(function(options, user) {
+    var entity_id = BoardObject.insert({
+      position: random_empty_position(),
+      display: options.profile.name[0],
+      display_color: "rgb(0,0,255)",
+      display_photourl:
+        "http://graph.facebook.com/" + user.services.facebook.id + "/picture",
+      name: options.profile.name,
+      score: 0
+    });
+
+    user.profile = options.profile;
+    user.profile.board_object = entity_id;
+    // TODO add saving user profile image url to profile
+    return user;
+  });
+
+
   Meteor.startup(function () {
     // code to run on server at startup
   });
