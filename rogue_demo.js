@@ -15,26 +15,14 @@ var random_empty_position = function() {
   }
 }
 
-Meteor.startup(function() {
-  if (BoardObject.find().count() == 0) {
-    var entity_id = BoardObject.insert({
-        position: {x: 2, y:2},
-        display: 'A',
-        display_color: "rgb(0,0,255)",
-        name: 'Alexey',
-        score: 0
-      });
-  }
-});
-
 if (Meteor.isClient) {
   Template.grid_world.helpers({
     row: function() { return _.range(BOARDSIZE.y);},
     cell: function() { return _.range(BOARDSIZE.x);},
-    player_at_cell: function(x) {
-      var player = BoardObject.findOne({position: {x: x, y: 2}});
+    player_at_cell: function(position) {
+      var player = BoardObject.findOne({position: position.hash});
       if (player) {
-        return "A"; // player.display;
+        return player.display;
       }
       return "_";
     }
@@ -50,8 +38,28 @@ if (Meteor.isClient) {
   $(document).keydown(function(e) {
     e.preventDefault();
     change = KEYS_TO_XY_CHANGE[e.keyCode] || {};
-    BoardObject.update({_id: BoardObject.findOne()._id},
-      {$inc: change}
-    );
+    if (Meteor.userId()) {
+      BoardObject.update({_id: Meteor.user().profile.board_object},
+        {$inc: change}
+      );
+    }
+  });
+}
+
+if (Meteor.isServer) {
+ Accounts.onCreateUser(function(options, user) {
+    var entity_id = BoardObject.insert({
+      position: random_empty_position(),
+      display: options.profile.name[0],
+      display_color: "rgb(0,0,255)",
+      display_photourl:
+        "http://graph.facebook.com/" + user.services.facebook.id + "/picture",
+      name: options.profile.name,
+      score: 0
+    });
+
+    user.profile = options.profile;
+    user.profile.board_object = entity_id;
+    return user;
   });
 }

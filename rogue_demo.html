@@ -12,7 +12,7 @@
   <table>
     {{# each row }}
     <tr> {{# each cell }}
-      <td> {{ player_at_cell this }}</td>
+      <td> {{ player_at_cell x=this y=..}}</td>
   {{/each}} </tr>
     {{/each}}
   </table>
