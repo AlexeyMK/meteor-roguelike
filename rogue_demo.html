@@ -1,0 +1,18 @@
+<head>
+  <title>rogue_demo</title>
+</head>
+
+<body>
+  {{> grid_world}}
+</body>
+
+<template name="grid_world">
+  <h1>Hello World!</h1>
+  <table>
+    {{# each row }}
+    <tr> {{# each cell }}
+      <td>_</td>
+  {{/each}} </tr>
+    {{/each}}
+  </table>
+</template>
