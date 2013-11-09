@@ -1,0 +1,25 @@
+<head>
+  <title>livedemo</title>
+</head>
+
+<body>
+  <div>
+  {{ loginButtons }}
+  </div>
+  {{> grid}}
+</body>
+
+<template name="grid">
+  <div id="grid">
+  {{#each eachRow }}
+    {{#each eachCell }}
+      {{> cell }}
+    {{/each}}
+    <br />
+  {{/each}}
+  </div>
+</template>
+
+<template name="cell">
+  {{render_player}}
+</template>
