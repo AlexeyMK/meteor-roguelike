@@ -24,7 +24,7 @@ if (Meteor.isClient) {
     40: {'position.x': 0, 'position.y': 1}, // down
   };
 
-  $(document).keydown(function(e) {
+  $(window.document).keydown(function(e) {
     e.preventDefault();
     change = KEYS_TO_XY_CHANGE[e.keyCode] || {};
     Entity.update({_id: Meteor.user().profile.entity_id},

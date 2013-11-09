@@ -10,3 +10,6 @@ jquery
 underscore
 accounts-ui
 accounts-facebook
+standard-app-packages
+mongo-livedata
+minimongo
