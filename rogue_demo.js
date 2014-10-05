@@ -16,23 +16,25 @@ var random_empty_position = function() {
 }
 
 Meteor.startup(function() {
-  var entity_id = BoardObject.insert({
-      position: {x: 2, y:2},
-      display: 'A',
-      display_color: "rgb(0,0,255)",
-      name: 'Alexey',
-      score: 0
-    });
+  if (BoardObject.find().count() == 0) {
+    var entity_id = BoardObject.insert({
+        position: {x: 2, y:2},
+        display: 'A',
+        display_color: "rgb(0,0,255)",
+        name: 'Alexey',
+        score: 0
+      });
+  }
 });
 
 if (Meteor.isClient) {
   Template.grid_world.helpers({
     row: function() { return _.range(BOARDSIZE.y);},
     cell: function() { return _.range(BOARDSIZE.x);},
-    player_at_cell: function(x, y) {
-      var player = BoardObject.findOne({position: {x: x, y: y}});
+    player_at_cell: function(x) {
+      var player = BoardObject.findOne({position: {x: x, y: 2}});
       if (player) {
-        return player.display;
+        return "A"; // player.display;
       }
       return "_";
     }
